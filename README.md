@@ -25,10 +25,9 @@ To run this application locally, follow these steps:
 
 #### Usage
 1. Compile the project in Release mode.
-2. Run the application.
-3. Use the application to create Temperature-Radiance relationship.
+2. Run the application (either in IDE or from `.exe`
 
-### Standalone .exe
+### Standalone `.exe`
 Simply copy the [release](WpfApp1/bin/Release/net8.0-windows) directory to your PC.
 
 ## Contributing
