@@ -29,8 +29,7 @@ To run this application locally, follow these steps:
 3. Use the application to create Temperature-Radiance relationship.
 
 ### Standalone .exe
-
-#### Simply copy the [release](WpfApp1/bin/Release/net8.0-windows) directory to your PC.
+Simply copy the [release](WpfApp1/bin/Release/net8.0-windows) directory to your PC.
 
 ## Contributing
 Contributions are welcome! Please fork the repository and create a pull request with your improvements.
