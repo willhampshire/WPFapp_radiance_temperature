@@ -12,7 +12,7 @@ This application calculates a Radiance Temperature relationship, using filters a
 To run this application locally, follow these steps:
 
 ### Prerequisites
-- [.NET](https://dotnet.microsoft.com/en-us/download/dotnet) 8 Framework installation
+- [.NET](https://dotnet.microsoft.com/en-us/download/dotnet) 8 Framework installation (runtime required to run from `.exe`)
 
 ### IDE setup
 #### Installation
