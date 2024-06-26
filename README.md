@@ -14,7 +14,8 @@ To run this application locally, follow these steps:
 ### Prerequisites
 - .NET 8 Framework installed
 
-### Installation
+###IDE setup
+#### Installation
 1. Clone the repository:
    ```bash
    git clone https://github.com/willhampshire/WPFapp_radiance_temperature.git
@@ -22,17 +23,21 @@ To run this application locally, follow these steps:
    
 2. Open the project in IDE.
 
-### Usage
+#### Usage
 1. Compile the project in Release mode.
 2. Run the application.
 3. Use the application to create Temperature-Radiance relationship.
+
+###Standalone .exe
+
+####Simply copy the [release](WpfApp1/bin/Release/net8.0-windows) directory to your PC.
 
 ## Contributing
 Contributions are welcome! Please fork the repository and create a pull request with your improvements.
 
 ## License
-This project is licensed under the MIT License - see the [LICENSE.md](LICENSE.md) file for details.
+This project is licensed under CC0 - see the [LICENSE.md](LICENSE.md) file for details.
 
 ## Acknowledgments
-- Built using C# and .NET Framework usinf Rider IDE student license.
+- Built using C# and .NET Framework, using Rider IDE student license.
 - Utilizes SQLite for database operations.
