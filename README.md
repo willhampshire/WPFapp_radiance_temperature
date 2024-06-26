@@ -14,7 +14,7 @@ To run this application locally, follow these steps:
 ### Prerequisites
 - .NET 8 Framework installed
 
-###IDE setup
+### IDE setup
 #### Installation
 1. Clone the repository:
    ```bash
@@ -28,9 +28,9 @@ To run this application locally, follow these steps:
 2. Run the application.
 3. Use the application to create Temperature-Radiance relationship.
 
-###Standalone .exe
+### Standalone .exe
 
-####Simply copy the [release](WpfApp1/bin/Release/net8.0-windows) directory to your PC.
+#### Simply copy the [release](WpfApp1/bin/Release/net8.0-windows) directory to your PC.
 
 ## Contributing
 Contributions are welcome! Please fork the repository and create a pull request with your improvements.
