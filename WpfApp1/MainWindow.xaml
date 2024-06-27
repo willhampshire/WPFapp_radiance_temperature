@@ -66,11 +66,12 @@
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
                         
                         
-                        <Grid Grid.Row="1" Margin="20,2">
+                        <Grid Grid.Row="1" Margin="20,8,20,0">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="50"/>
                                 <ColumnDefinition Width="*"/>
@@ -82,16 +83,21 @@
                         <TextBlock Text="Database" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Row="0"/>
                         
                         <!-- Buttons for Add and Delete -->
-                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="10,5" Grid.Row="2">
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="10,5, 10, 0" Grid.Row="2">
                             <Button Content="Add" Width="75" Margin="5" Click="AddButton_Click"/>
                             <Button Content="Delete" Width="75" Margin="5" Click="DeleteButton_Click"/>
                         </StackPanel>
                         
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="10,0" Grid.Row="3">
+                            <Button Content="Duplicate" Width="75" Margin="5" Click="Duplicate_Click"/>
+                            <Button Content="Rename" Width="75" Margin="5" Click="Rename_Click"/>
+                        </StackPanel>
+                        
                         <!-- Select this filter button -->
-                        <Button Content="Activate filter" Width="150" Margin="5" HorizontalAlignment="Center" Grid.Row="3" Click="SelectButton_Click"/>
+                        <Button Grid.Row="4" Content="Activate filter" Width="130" Margin="5" HorizontalAlignment="Center" Click="SelectButton_Click"/>
                         
                         <!-- ListBox filling the remaining space -->
-                        <ListBox Name="FiltersDatabaseListBox" Margin="10,5" Grid.Row="4"/>
+                        <ListBox Name="FiltersDatabaseListBox" Margin="10,5" Grid.Row="5"/>
                     </Grid>
                     
                     <TextBlock Grid.Column="1" Grid.Row="0" Text="Parameters" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
@@ -164,7 +170,7 @@
                         <TextBlock Text="Active filters" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Row="0"/>
                         
                         <!-- Select this filter button -->
-                        <Button Content="Dectivate filter" Click="Deactivate_Click" Width="150" Margin="5" HorizontalAlignment="Center" Grid.Row="3"/>
+                        <Button Content="Dectivate filter" Click="Deactivate_Click" Width="130" Margin="5,8,5,5" HorizontalAlignment="Center" Grid.Row="3"/>
                         
                         <!-- ListBox filling the remaining space -->
                         <ListBox Name="ActiveFiltersListBox" Margin="10,5" Grid.Row="4"/>

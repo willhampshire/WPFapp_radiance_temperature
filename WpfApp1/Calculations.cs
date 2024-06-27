@@ -87,6 +87,45 @@ namespace WpfApp1
 
     public class Calculations
     {
+        public static bool InterpTemperatureRadiance(double[] temperatureArray, double[] radianceArray, double temp, out double rad)
+        {
+            
+            // Check if the temperature is outside the bounds of the array
+            if (temp <= temperatureArray[0])
+            {
+                rad = radianceArray[0];
+                //MessageBox.Show("Error - temperature outside of range");
+                return true;
+            }
+            
+            if (temp >= temperatureArray[temperatureArray.Length - 1])
+            {
+                rad = radianceArray[radianceArray.Length - 1];
+                //MessageBox.Show("Error - temperature outside of range");
+                return true;
+            }
+
+            // Find the surrounding temperatures for interpolation
+            for (int i = 0; i < temperatureArray.Length - 1; i++)
+            {
+                if (temp >= temperatureArray[i] && temp <= temperatureArray[i + 1])
+                {
+                    // Perform linear interpolation
+                    double t1 = temperatureArray[i];
+                    double t2 = temperatureArray[i + 1];
+                    double r1 = radianceArray[i];
+                    double r2 = radianceArray[i + 1];
+
+                    // Calculate the interpolated radiance
+                    rad = r1 + ((temp - t1) / (t2 - t1)) * (r2 - r1);
+                    return true;
+                }
+            }
+
+            rad = 0;
+            return false;
+        }
+        
         public static double InterpFilterTransmission(double wavelengthMicrons, List<(double Wavelength, double Transmission)> filterData)
         {
             // Find the two closest wavelengths in filterData

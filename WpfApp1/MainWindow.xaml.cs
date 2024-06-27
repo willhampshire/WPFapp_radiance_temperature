@@ -357,10 +357,86 @@ namespace WpfApp1
         }
 
 
+        private void Duplicate_Click(object sender, RoutedEventArgs e)
+        {
+            string name;
+            string newName;
+            List<(double wavelength, double transmission)> filterData = new List<(double wavelength, double transmission)>();
+            
+            try
+            {
+                name = FiltersDatabaseListBox.SelectedItem.ToString();
+                newName = name + "_copy";
+            }
+            catch
+            {
+                name = null;
+                newName = null;
+            }
+
+            if (!string.IsNullOrEmpty(name) && !string.IsNullOrEmpty(newName) && name != "Filters")
+            {
+                if (!setFilters.Contains(newName) && !FiltersDatabaseListBox.Items.Contains(newName))
+                {
+                    //GetFilterData AddFilter
+                    filterData = Database.GetFilterData(name);
+                    Database.AddFilter(newName, filterData);
+                    Console.WriteLine($"Added {newName} to database");
+                    FiltersDatabaseListBox.Items.Add(newName);
+                }
+                else
+                {
+                    MessageBox.Show($"'{newName}' already exists");
+                }
+            }
+            else
+            {
+                MessageBox.Show($"Either '{name}' or '{newName}' invalid");
+            }
+        }
+
+        private void Rename_Click(object sender, RoutedEventArgs e)
+        {
+            string oldName;
+            try
+            {
+                oldName = FiltersDatabaseListBox.SelectedItem.ToString();
+            }
+            catch
+            {
+                MessageBox.Show("No filter selected to rename");
+                oldName = null;
+                return;
+            }
+            
+            string newName = NewFilterName.Text.Replace(" ", "_");
+            if (!string.IsNullOrEmpty(newName) && newName != "Filters" && !setFilters.Contains(newName) && !FiltersDatabaseListBox.Items.Contains(newName))
+            {
+                Database.RenameFilter(oldName, newName);
+            
+                // remove old name from filter db listbox, add new
+                FiltersDatabaseListBox.Items.Remove(oldName);
+                FiltersDatabaseListBox.Items.Add(newName);
+                FiltersDatabaseListBox.SelectedItem = newName;
+
+                if (ActiveFiltersListBox.Items.Contains(oldName))
+                {
+                    // same in active filters listbox
+                    ActiveFiltersListBox.Items.Remove(oldName);
+                    ActiveFiltersListBox.Items.Add(newName);
+                }
+                
+            }
+            else
+            {
+                MessageBox.Show($"Name '{newName}' invalid");
+            }
+        }
+        
         private void AddButton_Click(object sender, RoutedEventArgs e)
         {
             
-            string name = NewFilterName.Text;
+            string name = NewFilterName.Text.Replace(" ", "_"); // remove spaces - table names should not contain spaces
             
             if (filter != null && filter.Count > 0)
             {
@@ -369,7 +445,7 @@ namespace WpfApp1
                     setFilters.Add(name);
                     Console.WriteLine($"{setFilters} does not contain {name}");
                     // Prepare a list to hold wavelength and transmission data
-                    List<(double wavelength, double transmission)> data = new List<(double, double)>();
+                    List<(double wavelength, double transmission)> data = new List<(double wavelength, double transmission)>();
 
                     foreach (var item in filter)
                     {
@@ -398,15 +474,32 @@ namespace WpfApp1
         
         private void DeleteButton_Click(object sender, RoutedEventArgs e)
         {
-            string name = FiltersDatabaseListBox.SelectedItem.ToString();
+            string name;
+            try
+            {
+                name = FiltersDatabaseListBox.SelectedItem.ToString();
+            }
+            catch
+            {
+                name = null;
+            }
             
-            Database.DeleteFilter(name);
-            Console.WriteLine($"Dropped {name} from database");
-            FiltersDatabaseListBox.Items.Remove(name);
-            FiltersDatabaseListBox.SelectedIndex = -1;
-            ActiveFiltersListBox.Items.Remove(name);
-            ActiveFiltersListBox.SelectedIndex = -1;
-            setFilters.Remove(name);
+
+            if (name != null && name != "")
+            {
+                Database.DeleteFilter(name);
+                Console.WriteLine($"Dropped {name} from database");
+                FiltersDatabaseListBox.Items.Remove(name);
+                FiltersDatabaseListBox.SelectedIndex = -1;
+                ActiveFiltersListBox.Items.Remove(name);
+                ActiveFiltersListBox.SelectedIndex = -1;
+                setFilters.Remove(name);
+                return;
+            }
+            
+            MessageBox.Show($"Could not delete filter '{name}'", "Delete filter from DB Error");
+            selectFilter = "";
+            
         }
     
         private void UploadButton_Click(object sender, RoutedEventArgs e)
@@ -471,45 +564,7 @@ namespace WpfApp1
             string filterInfoMsg = "Wavelength units - micron \nMust not have headers in CSV, first row should be wavelength-transmission pair.";
             MessageBox.Show(filterInfoMsg, "Filter CSV Info");
         }
-
-        private bool InterpTemperatureRadiance(double[] temperatureArray, double[] radianceArray, double temp, out double rad)
-        {
-            
-            // Check if the temperature is outside the bounds of the array
-            if (temp <= temperatureArray[0])
-            {
-                rad = radianceArray[0];
-                //MessageBox.Show("Error - temperature outside of range");
-                return true;
-            }
-            
-            if (temp >= temperatureArray[temperatureArray.Length - 1])
-            {
-                rad = radianceArray[radianceArray.Length - 1];
-                //MessageBox.Show("Error - temperature outside of range");
-                return true;
-            }
-
-            // Find the surrounding temperatures for interpolation
-            for (int i = 0; i < temperatureArray.Length - 1; i++)
-            {
-                if (temp >= temperatureArray[i] && temp <= temperatureArray[i + 1])
-                {
-                    // Perform linear interpolation
-                    double t1 = temperatureArray[i];
-                    double t2 = temperatureArray[i + 1];
-                    double r1 = radianceArray[i];
-                    double r2 = radianceArray[i + 1];
-
-                    // Calculate the interpolated radiance
-                    rad = r1 + ((temp - t1) / (t2 - t1)) * (r2 - r1);
-                    return true;
-                }
-            }
-
-            rad = 0;
-            return false;
-        }
+        
 
         public TempRawList results;
         private bool SaveData(double[] temperatureArray, double[] radianceArray)
@@ -524,7 +579,9 @@ namespace WpfApp1
             for (double temp = tempStart; temp <= tempStop; temp += tempStep)
             {
                 Console.WriteLine($"Temp: {temp} step: {tempStep}");
-                bool interpTempRadiance = InterpTemperatureRadiance(temperatureArray, radianceArray, temp, out radiance);
+                //interp even though not required in case rounding errors occur meaning exact double value cannot be
+                //found, or in future to change output vs input resolution.
+                bool interpTempRadiance = Calculations.InterpTemperatureRadiance(temperatureArray, radianceArray, temp, out radiance);
                 radianceTemperature.Add(new Tuple<double, double>(temp, radiance));
                 if (!interpTempRadiance)
                 {

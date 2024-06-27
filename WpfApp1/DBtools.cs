@@ -239,6 +239,29 @@ namespace WpfApp1.DBtools
             }
         }
 
+        public static void RenameFilter(string oldName, string newName)
+        {
+            string connectionString = $"Data Source={DatabaseFileName};Version=3;";
+
+            using (var connection = new SQLiteConnection(connectionString))
+            {
+                connection.Open();
+
+                string renameTableSql = @"
+                ALTER TABLE ""@OldName""
+                RENAME TO ""@NewName"";";
+
+                renameTableSql = renameTableSql.Replace("@OldName", oldName).Replace("@NewName", newName);
+
+                using (var command = new SQLiteCommand(renameTableSql, connection))
+                {
+                    command.ExecuteNonQuery();
+                }
+
+                connection.Close();
+            }
+        }
+
 
         private static void ExecuteNonQuery(string connectionString, string sql)
         {
