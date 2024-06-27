@@ -223,7 +223,7 @@
                     <Grid Grid.Column="1">
                         <oxy:PlotView Name="RadianceTemperatureOxyPlot" Model="{Binding PlotModel}" />
                     </Grid>
-                    <TextBlock Grid.Row="1" Grid.Column="1" Margin="10" Text="Use right click to adjust graph" HorizontalAlignment="Center"/>
+                    <TextBlock Grid.Row="1" Grid.Column="1" Margin="10" Text="Use right click / scroll on axes to adjust graph" HorizontalAlignment="Center"/>
                 </Grid>
             </TabItem>
         </TabControl>

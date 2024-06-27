@@ -409,8 +409,10 @@ namespace WpfApp1
                 return;
             }
             
-            string newName = NewFilterName.Text.Replace(" ", "_");
-            if (!string.IsNullOrEmpty(newName) && newName != "Filters" && !setFilters.Contains(newName) && !FiltersDatabaseListBox.Items.Contains(newName))
+            string newName;
+            bool nameCheck = CorrectInputFilterName(NewFilterName.Text, out newName);
+            
+            if (nameCheck && !FiltersDatabaseListBox.Items.Contains(newName))
             {
                 Database.RenameFilter(oldName, newName);
             
@@ -432,15 +434,42 @@ namespace WpfApp1
                 MessageBox.Show($"Name '{newName}' invalid");
             }
         }
+
+        private bool CorrectInputFilterName(string oldName, out string newName)
+        {
+            newName = oldName.Replace("'"," "); // single quote has to go in double quotes
+            char[] charsToReplace = { ' ','"','`'}; // double quotes dangerous for SQL query
+            
+            if (oldName.Contains('"'))
+            {
+                MessageBox.Show("Double quotes not permitted in name");
+            }
+            
+            foreach (char c in charsToReplace)
+            {
+                newName = newName.Replace(c, '_');
+            }
+
+            if (!string.IsNullOrEmpty(newName) && newName != "Filters" && !setFilters.Contains(newName))
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
         
         private void AddButton_Click(object sender, RoutedEventArgs e)
         {
             
-            string name = NewFilterName.Text.Replace(" ", "_"); // remove spaces - table names should not contain spaces
+            //string name = NewFilterName.Text.Replace(" ", "_"); // remove spaces - table names should not contain spaces
+            string name;
+            bool nameCheck = CorrectInputFilterName(NewFilterName.Text, out name);
             
             if (filter != null && filter.Count > 0)
             {
-                if (!string.IsNullOrEmpty(name) && name != "Filters" && !setFilters.Contains(name))
+                if (nameCheck)
                 {
                     setFilters.Add(name);
                     Console.WriteLine($"{setFilters} does not contain {name}");
