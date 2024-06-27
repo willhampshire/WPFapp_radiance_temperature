@@ -2,7 +2,7 @@
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:oxy="http://oxyplot.org/wpf"
-        Title="Radiance - Temperature generator" Height="700" Width="800">
+        Title="Radiance - Temperature generator" Height="700" Width="820">
     <Grid>
         <TabControl x:Name="MainTabControl" SelectionChanged="MainTabControl_SelectionChanged">
             <TabItem Header="Input">
@@ -28,7 +28,7 @@
                         </Grid.RowDefinitions>
                         
                         <Button Grid.Column="2" Grid.Row="0" Width="200" Margin="10" Content="Validate parameters" Click="ValidateButton_Click"/>
-                        <TextBlock Name="ValidateInfoText" Margin="10" Grid.Column="2" Grid.Row="1" Text="Validation results will appear here." TextWrapping="Wrap" HorizontalAlignment="Center"/>
+                        <TextBlock Name="ValidateInfoText" Margin="10" Grid.Column="2" Grid.Row="1" Text="Validation results will appear here." TextWrapping="WrapWithOverflow" HorizontalAlignment="Center"/>
                     </Grid>
 
                     <!-- Upload Button -->
@@ -197,16 +197,29 @@
                         <RowDefinition Height="*"/>
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
-                    <Grid Grid.Column="0">
+                    <Grid Grid.Row="0" Grid.Column="0" Grid.RowSpan="2">
                         <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="Auto"/>
                             <RowDefinition Height="*"/>
                         </Grid.RowDefinitions>
-                        <TextBlock Text="Save Data" Margin="10" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center" Grid.Row="0"/>
-                        <Button Click="DownloadResults_Click" Grid.Row="1" Grid.Column="1" Content="Download as CSV" Margin="10"/>
+                        <TextBlock Grid.Row="0" Text="Save Data" Margin="10" FontSize="16" FontWeight="Bold" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                        <Button Click="DownloadResults_Click" Grid.Row="1" Content="Download as CSV" Margin="10"/>
+                        <Grid Grid.Row="2">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto"/>
+                                <RowDefinition Height="Auto"/>
+                            </Grid.RowDefinitions>
+                            <TextBlock FontSize="13" Grid.Row="0" HorizontalAlignment="Left" Text="Normalise to max radiance of:" Margin="10,5,10,5" TextWrapping="Wrap"/>
+                            <TextBox Grid.Row="1" Name="NormaliseRadianceTextBox" Width="150" TextWrapping="Wrap" HorizontalAlignment="Left" Margin="10,5,10,5"/>
+                        </Grid>
+                        
+                        
+                    
                     </Grid>
+
                     <Grid Grid.Column="1">
                         <oxy:PlotView Name="RadianceTemperatureOxyPlot" Model="{Binding PlotModel}" />
                     </Grid>

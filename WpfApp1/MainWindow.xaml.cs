@@ -122,7 +122,7 @@ namespace WpfApp1
             bool interpParamsCheck = checkInterpolation();
             if (!interpParamsCheck || !radianceParamsCheck)
             {
-                ValidateInfoText.Text = $"Interpolation parameters error: {validateExternalErrorMessage}";
+                ValidateInfoText.Text = $"Parameters error: {validateExternalErrorMessage}";
                 return false;
             }
             
@@ -136,7 +136,7 @@ namespace WpfApp1
 
             if (waveLow >= waveHigh)
             {
-                validateExternalErrorMessage = $"E{waveLow} >= {waveHigh}";
+                validateExternalErrorMessage = $"Radiometric: {waveLow} >= {waveHigh}";
                 return false;
             }
 
@@ -154,7 +154,7 @@ namespace WpfApp1
             }
             else
             {
-                validateExternalErrorMessage = $"Could not convert {tempStep} to Int16";
+                validateExternalErrorMessage = $"Interp: Could not convert {tempStep} to Int16";
                 return false;
             }
 
@@ -162,22 +162,22 @@ namespace WpfApp1
 
             if (tempStop - tempStart < tempStep)
             {
-                validateExternalErrorMessage = $"Invalid start/stop/step: tempStop - tempStart < tempStep";
+                validateExternalErrorMessage = "Interp: Invalid start/stop/step: tempStop - tempStart < tempStep";
                 return false;
             }
 
             if (tempStart > tempStop)
             {
-                validateExternalErrorMessage = "Invalid start/stop/step: tempStart > tempStep";
+                validateExternalErrorMessage = "Interp: Invalid start/stop/step: tempStart > tempStep";
             }
 
             if (stepRemainder == 0)
             {
-                ValidateInfoText.Text += "\nStep is correct for start and stop temperatures.";
+                ValidateInfoText.Text += "\nInterp: params OK";
             }
             else
             {
-                validateExternalErrorMessage = $"Invalid start/stop/step - remainder {stepRemainder}";
+                validateExternalErrorMessage = $"Interp: Invalid start/stop/step - remainder {stepRemainder}";
                 return false;
             }
             return true;
@@ -561,7 +561,9 @@ namespace WpfApp1
 
         private void UploadFilterInfo(object sender, RoutedEventArgs routedEventArgs)
         {
-            string filterInfoMsg = "Wavelength units - micron \nMust not have headers in CSV, first row should be wavelength-transmission pair.";
+            string filterInfoMsg = "Wavelength units - micron \nMust not have headers in CSV, first row should be " +
+                                   "wavelength-transmission pair.\n \nFilter data can be edited in preview before " +
+                                   "adding to DB, but thereafter edits will not be saved.";
             MessageBox.Show(filterInfoMsg, "Filter CSV Info");
         }
         
@@ -592,9 +594,56 @@ namespace WpfApp1
             results = radianceTemperature;
             return true;
         }
+        
+        private bool SaveData(double[] temperatureArray, double[] radianceArray, double maxRadianceUser) // overloaded method - include radiance scaling
+        {
+            double tempStart = inputParameters[2];
+            double tempStop = inputParameters[3];
+            double tempStep = inputParameters[4];
+
+            double radiance;
+            TempRawList radianceTemperature = new TempRawList();
+            
+            // find max radiance
+            double maxRadiance;
+            Calculations.InterpTemperatureRadiance(temperatureArray, radianceArray, tempStop, out maxRadiance);
+            double normalisingFactor = maxRadianceUser / maxRadiance;
+
+            for (double temp = tempStart; temp <= tempStop; temp += tempStep)
+            {
+                Console.WriteLine($"Temp: {temp} step: {tempStep}");
+                //interp even though not required in case rounding errors occur meaning exact double value cannot be
+                //found, or in future to change output vs input resolution.
+                bool interpTempRadiance = Calculations.InterpTemperatureRadiance(temperatureArray, radianceArray, temp, out radiance);
+                radianceTemperature.Add(new Tuple<double, double>(temp, radiance * normalisingFactor));
+                if (!interpTempRadiance)
+                {
+                    return false;
+                }
+            }
+            Console.WriteLine("Temperature Radiance data created");
+            results = radianceTemperature;
+            return true;
+        }
+        
+        
 
         private void DownloadResults_Click(object sender, RoutedEventArgs e)
         {
+            try
+            {
+                if (!string.IsNullOrEmpty(NormaliseRadianceTextBox.Text)) // run overloaded method to overwrite values
+                {
+                    double maxRadianceUser = Convert.ToDouble(NormaliseRadianceTextBox.Text);
+                    SaveData(temperatureArray, radianceArray, maxRadianceUser);
+                    MessageBox.Show($"Normalising radiance to max of {maxRadianceUser}");
+                }
+            }
+            catch
+            {
+                MessageBox.Show($"Could not normalise to '{NormaliseRadianceTextBox.Text}'");
+            }
+            
             try
             {
                 // Create SaveFileDialog
