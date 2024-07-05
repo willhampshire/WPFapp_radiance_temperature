@@ -1,7 +1,7 @@
 # WPF Radiance Temperature Application
 
 ## Overview
-This application calculates a Radiance Temperature relationship, using filters and input data (wavelength range, temperature limits, resolution). The (Sakuma Hattori)[https://en.wikipedia.org/wiki/Sakuma–Hattori_equation] Planck III approximation calculates expected signal for a Temperature and Wavelength, and gives a good result for narrow band applications.
+This application calculates a Radiance Temperature relationship, using filters and input data (wavelength range, temperature limits, resolution). The [Sakuma Hattori](https://en.wikipedia.org/wiki/Sakuma–Hattori_equation) Planck III approximation calculates expected signal for a Temperature and Wavelength, and gives a good result for narrow band applications.
 
 ## Features
 - **Filter Management**: Add, delete, and stack filters dynamically.
